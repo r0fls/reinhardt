@@ -7,6 +7,6 @@ import (
 )
 
 // Default home
-func Home(r Request) Response {
+View Home(r Request) Response {
 	return Render(r, "home.html")
 }

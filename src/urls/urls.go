@@ -1,4 +1,8 @@
 package urls
 
-func Url(slug string) {
+import (
+	"github.com/r0fls/reinhardt/src/view"
+)
+
+func Route(slug string, v view.View) {
 }
