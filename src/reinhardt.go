@@ -21,14 +21,21 @@ func new_project(name string) {
 
 	v := []string{name, "/app", "/views"}
 	os.Mkdir(strings.Join(v, ""), 0700)
+
+	s := []string{name, "/app/views/views.go"}
+	text, err := ioutil.ReadFile("app_files/views.go")
+	check(err)
+	err = ioutil.WriteFile(strings.Join(s, ""), text, 0644)
+	check(err)
+
 	vf := []string{name, "/app", "/views", "/views.go"}
 	os.Create(strings.Join(vf, ""))
 
 	t := []string{name, "/app", "/temps"}
 	os.Mkdir(strings.Join(t, ""), 0700)
 
-	s := []string{name, "/settings.toml"}
-	text, err := ioutil.ReadFile("app_files/settings.toml")
+	s = []string{name, "/settings.toml"}
+	text, err = ioutil.ReadFile("app_files/settings.toml")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, ""), text, 0644)
 	check(err)
@@ -39,7 +46,7 @@ func new_project(name string) {
 	err = ioutil.WriteFile(strings.Join(s, ""), text, 0644)
 	check(err)
 
-	u := []string{name, "/urls.go"}
+	u := []string{name, "/app/urls.go"}
 	os.Create(strings.Join(u, ""))
 }
 
