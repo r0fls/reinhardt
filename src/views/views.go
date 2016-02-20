@@ -12,7 +12,7 @@ type Response struct {
 }
 
 func Render(context Request, template string) r Response {
-
+        // this should be the template, inside the templates dir from config
 	s := []string{name, "app", "views", "views.go"}
 	text, err := ioutil.ReadFile("app_files/views.go")
 	res := response(err)
