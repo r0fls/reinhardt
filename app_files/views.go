@@ -7,6 +7,6 @@ import (
 )
 
 // Default home
-func Home(r reinhardt.Request) Response {
-	return Render(r.Url, "home.html")
+func Home(r Request) Response {
+	return Render(r, "home.html")
 }

@@ -1,9 +1,11 @@
-package manager
+package main
 
 import (
+	"fmt"
 	"html"
 	"log"
 	"net/http"
+	"os"
 )
 
 func load_views(appname string) {
@@ -13,6 +15,7 @@ func load_models(appname string) {
 }
 
 func load_app(appname string) {
+	//http.Handle("/foo", fooHandler)
 }
 
 func run_server() {
@@ -25,6 +28,8 @@ func run_server() {
 	// load_app
 }
 
-if os.Args[1] == "runserver" {
-	run_server()
+func main() {
+	if os.Args[1] == "runserver" {
+		run_server()
+	}
 }

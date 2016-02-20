@@ -14,40 +14,37 @@ func check(e error) {
 }
 
 func new_project(name string) {
-	m := []string{name, "/app", "/models"}
-	os.MkdirAll(strings.Join(m, ""), 0700)
-	mf := []string{name, "/app", "/models", "/models.go"}
-	os.Create(strings.Join(mf, ""))
+	m := []string{name, "app", "models"}
+	os.MkdirAll(strings.Join(m, "/"), 0700)
+	mf := []string{name, "app", "models", "models.go"}
+	os.Create(strings.Join(mf, "/"))
 
-	v := []string{name, "/app", "/views"}
-	os.Mkdir(strings.Join(v, ""), 0700)
+	v := []string{name, "app", "views"}
+	os.Mkdir(strings.Join(v, "/"), 0700)
 
-	s := []string{name, "/app/views/views.go"}
+	s := []string{name, "app", "views", "views.go"}
 	text, err := ioutil.ReadFile("app_files/views.go")
 	check(err)
-	err = ioutil.WriteFile(strings.Join(s, ""), text, 0644)
+	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
 
-	vf := []string{name, "/app", "/views", "/views.go"}
-	os.Create(strings.Join(vf, ""))
+	t := []string{name, "app", "temps"}
+	os.Mkdir(strings.Join(t, "/"), 0700)
 
-	t := []string{name, "/app", "/temps"}
-	os.Mkdir(strings.Join(t, ""), 0700)
-
-	s = []string{name, "/settings.toml"}
+	s = []string{name, "settings.toml"}
 	text, err = ioutil.ReadFile("app_files/settings.toml")
 	check(err)
-	err = ioutil.WriteFile(strings.Join(s, ""), text, 0644)
+	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
 
-	s = []string{name, "/manager.go"}
+	s = []string{name, "manager.go"}
 	text, err = ioutil.ReadFile("app_files/manager.go")
 	check(err)
-	err = ioutil.WriteFile(strings.Join(s, ""), text, 0644)
+	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
 
-	u := []string{name, "/app/urls.go"}
-	os.Create(strings.Join(u, ""))
+	u := []string{name, "app", "urls.go"}
+	os.Create(strings.Join(u, "/"))
 }
 
 func Reinhardt() {
