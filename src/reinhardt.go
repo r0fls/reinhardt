@@ -31,8 +31,8 @@ func new_project(name string) {
 	t := []string{name, "app", "temps"}
 	os.Mkdir(strings.Join(t, "/"), 0700)
 
-	s = []string{name, "settings.toml"}
-	text, err = ioutil.ReadFile("app_files/settings.toml")
+	s = []string{name, "settings.json"}
+	text, err = ioutil.ReadFile("app_files/settings.json")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
