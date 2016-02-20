@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -21,10 +22,17 @@ func load_app(appname string) {
 }
 
 type Config struct {
-	Address string
-	Port    string
-	Users   []string
-	Groups  []string
+	Address   string
+	Port      string
+	Templates []string
+	Users     []string
+	Groups    []string
+}
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
 }
 
 func load_config(location string) Config {
@@ -40,12 +48,16 @@ func load_config(location string) Config {
 
 func run_server(location string) {
 	config := load_config(location)
+	s := []string{config.Templates[0], "home.html"}
+	text, err := ioutil.ReadFile(strings.Join(s, "/"))
+	check(err)
 	//http.Handle("/foo", fooHandler)
 	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+		//fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+		fmt.Fprintf(w, string(text), html.EscapeString(r.URL.Path))
 	})
 	ap := []string{config.Address, config.Port}
-	go log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
+	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
 	// for app in conf
 	// load_app
 }

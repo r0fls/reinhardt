@@ -31,6 +31,12 @@ func new_project(name string) {
 	t := []string{name, "app", "temps"}
 	os.Mkdir(strings.Join(t, "/"), 0700)
 
+	s = []string{name, "app", "temps", "home.html"}
+	text, err = ioutil.ReadFile("app_files/home.html")
+	check(err)
+	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
+	check(err)
+
 	s = []string{name, "settings.json"}
 	text, err = ioutil.ReadFile("app_files/settings.json")
 	check(err)
@@ -43,12 +49,15 @@ func new_project(name string) {
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
 
-	u := []string{name, "app", "urls.go"}
-	os.Create(strings.Join(u, "/"))
+	s = []string{name, "app", "urls.go"}
+	text, err = ioutil.ReadFile("app_files/urls.go")
+	check(err)
+	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
+	check(err)
 }
 
 func Reinhardt() {
-	if len(os.Args) < 2 {
+	if len(os.Args) < 3 {
 		s := []string{"Usage: ", os.Args[0], " new <projectname>"}
 		fmt.Println(strings.Join(s, ""))
 	} else if os.Args[1] == "new" {

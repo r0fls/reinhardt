@@ -3,7 +3,7 @@ package views
 // Define views here
 
 import (
-	. "github.com/r0fls/reinhardt/src/views"
+	. "github.com/r0fls/reinhardt/src/view"
 )
 
 // Default home
