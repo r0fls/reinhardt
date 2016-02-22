@@ -61,7 +61,7 @@ func Reinhardt() {
 		s := []string{"Usage: ", os.Args[0], " new <projectname>"}
 		fmt.Println(strings.Join(s, ""))
 	} else if os.Args[1] == "new" {
-		s := []string{"Making project: ", os.Args[2]}
+		s := []string{"Created project: ", os.Args[2]}
 		fmt.Println(strings.Join(s, ""))
 		new_project(os.Args[2])
 	}

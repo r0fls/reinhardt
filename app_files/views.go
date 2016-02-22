@@ -7,6 +7,6 @@ import (
 )
 
 // Default home
-func Home(res view.Response, r view.Request) {
-	view.Render(res, r, "home.html")
+func Home(res view.Response, r view.Request, base []string) {
+	view.Render(res, r, "home.html", base)
 }

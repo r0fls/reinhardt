@@ -54,8 +54,8 @@ func run_server(location string) {
 	Urls := app.Urls()
 	for _, url := range Urls {
 		http.HandleFunc(url.Slug, func(w http.ResponseWriter, r *http.Request) {
-			//s := []string{config.Home, config.Apps[0], config.Templates[0], "home.html"}
-			url.View(view.Response{w}, view.Request{r})
+			base := []string{config.Home, config.Apps[0], config.Templates[0]}
+			url.View(view.Response{w}, view.Request{r}, base)
 		})
 	}
 	ap := []string{config.Address, config.Port}

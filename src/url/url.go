@@ -6,5 +6,5 @@ import (
 
 type Url struct {
 	Slug string
-	View func(view.Response, view.Request)
+	View func(view.Response, view.Request, []string)
 }
