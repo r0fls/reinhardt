@@ -16,10 +16,12 @@ type Response struct {
 	W http.ResponseWriter
 }
 
-func Render(res Response, req Request, template string, base []string) {
+func Render(template string, base []string) func(w http.ResponseWriter, r *http.Request) {
 	text, err := ioutil.ReadFile(strings.Join(append(base, template), "/"))
 	check(err)
-	fmt.Fprintf(res.W, string(text), html.EscapeString(req.R.URL.Path))
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, string(text), html.EscapeString(r.URL.Path))
+	}
 }
 
 type View func(context Request, template string) Response

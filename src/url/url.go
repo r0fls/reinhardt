@@ -1,10 +1,10 @@
 package url
 
 import (
-	"github.com/r0fls/reinhardt/src/view"
+	"net/http"
 )
 
 type Url struct {
 	Slug string
-	View func(view.Response, view.Request, []string)
+	View func([]string) func(w http.ResponseWriter, r *http.Request)
 }

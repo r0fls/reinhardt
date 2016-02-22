@@ -1,8 +1,0 @@
-{
-    "Address": "127.0.0.1",
-    "Port": "8000",
-    "Home": "/home/r0fls/Desktop/code/gowork/src/github.com/r0fls/reinhardt/test",
-    "GOPATH": "/home/r0fls/Desktop/code/gowork/", 
-    "Templates": ["temps"],
-    "Apps": ["app"]
-}

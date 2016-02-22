@@ -3,10 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/r0fls/reinhardt/src/view"
 	"github.com/r0fls/reinhardt/test/app"
-	//"html"
-	//"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -51,12 +48,10 @@ func load_config(location string) Config {
 func run_server(location string) {
 	config := load_config(location)
 	// should loop through all apps
+	base := []string{config.Home, config.Apps[0], config.Templates[0]}
 	Urls := app.Urls()
-	for _, url := range Urls {
-		http.HandleFunc(url.Slug, func(w http.ResponseWriter, r *http.Request) {
-			base := []string{config.Home, config.Apps[0], config.Templates[0]}
-			url.View(view.Response{w}, view.Request{r}, base)
-		})
+	for i, _ := range Urls {
+		http.Handle(Urls[i].Slug, http.HandlerFunc(Urls[i].View(base)))
 	}
 	ap := []string{config.Address, config.Port}
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
