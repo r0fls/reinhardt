@@ -1,26 +1,27 @@
 package view
 
 import (
+	"fmt"
+	"html"
 	"io/ioutil"
+	"net/http"
 )
 
 type Request struct {
-	Headers    string
-	Parameters string
-	Url        string
+	R *http.Request
 }
 
 type Response struct {
-	Status string
-	Body   []byte
+	W http.ResponseWriter
 }
 
-func Render(context Request, template string) Response {
-	// this should be the template, inside the templates dir from config
-	//s := []string{template, "app", "views", "views.go"}
-	text, err := ioutil.ReadFile("app_files/views.go")
-	res := response(err)
-	return Response{res, text}
+func Render(res Response, req Request, template string) {
+	text, err := ioutil.ReadFile(template)
+	if err != nil {
+		fmt.Fprintf(res.W, string(text), html.EscapeString(req.R.URL.Path))
+	} else {
+		fmt.Fprintf(res.W, "error retrieving template %s 404", template)
+	}
 }
 
 type View func(context Request, template string) Response

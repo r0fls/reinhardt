@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html"
-	"io/ioutil"
+	"github.com/r0fls/reinhardt/src/view"
+	"github.com/r0fls/reinhardt/test/app"
+	//"html"
+	//"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -24,9 +26,9 @@ func load_app(appname string) {
 type Config struct {
 	Address   string
 	Port      string
+	Home      string
 	Templates []string
-	Users     []string
-	Groups    []string
+	Apps      []string
 }
 
 func check(e error) {
@@ -48,18 +50,16 @@ func load_config(location string) Config {
 
 func run_server(location string) {
 	config := load_config(location)
-	s := []string{config.Templates[0], "home.html"}
-	text, err := ioutil.ReadFile(strings.Join(s, "/"))
-	check(err)
-	//http.Handle("/foo", fooHandler)
-	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
-		//fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-		fmt.Fprintf(w, string(text), html.EscapeString(r.URL.Path))
-	})
+	// should loop through all apps
+	Urls := app.Urls()
+	for _, url := range Urls {
+		http.HandleFunc(url.Slug, func(w http.ResponseWriter, r *http.Request) {
+			//s := []string{config.Home, config.Apps[0], config.Templates[0], "home.html"}
+			url.View(view.Response{w}, view.Request{r})
+		})
+	}
 	ap := []string{config.Address, config.Port}
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
-	// for app in conf
-	// load_app
 }
 
 func main() {

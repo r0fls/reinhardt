@@ -1,8 +1,13 @@
-package urls
+package app
 
 import (
-	"./views"
-	"github.com/r0fls/rienhardt/src/urls"
+	"github.com/r0fls/reinhardt/src/url"
+	"github.com/r0fls/reinhardt/test/app/views"
 )
 
-Url("/bar", views.Home)
+func Urls() []url.Url {
+	return []url.Url{
+		url.Url{"/bar", views.Home},
+		url.Url{"/", views.Home},
+	}
+}
