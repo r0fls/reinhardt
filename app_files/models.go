@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	model.Connect("postgres", "postgres", "test")
+	model.Connect("postgres", "postgres", "localhost", "235711", "test")
 }
