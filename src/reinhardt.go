@@ -16,14 +16,18 @@ func check(e error) {
 func new_project(name string) {
 	m := []string{name, "app", "models"}
 	os.MkdirAll(strings.Join(m, "/"), 0700)
-	mf := []string{name, "app", "models", "models.go"}
-	os.Create(strings.Join(mf, "/"))
+
+	s := []string{name, "app", "models", "models.go"}
+	text, err := ioutil.ReadFile("app_files/models.go")
+	check(err)
+	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
+	check(err)
 
 	v := []string{name, "app", "views"}
 	os.Mkdir(strings.Join(v, "/"), 0700)
 
-	s := []string{name, "app", "views", "views.go"}
-	text, err := ioutil.ReadFile("app_files/views.go")
+	s = []string{name, "app", "views", "views.go"}
+	text, err = ioutil.ReadFile("app_files/views.go")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)

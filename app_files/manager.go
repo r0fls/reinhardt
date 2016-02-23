@@ -26,6 +26,13 @@ type Config struct {
 	Home      string
 	Templates []string
 	Apps      []string
+	DB        DBConfig
+}
+
+type DBConfig struct {
+	Type string
+	User string
+	Name string
 }
 
 func check(e error) {

@@ -4,5 +4,9 @@
     "Home": "/home/r0fls/Desktop/code/gowork/src/github.com/r0fls/reinhardt/%s",
     "GOPATH": "%s", 
     "Templates": ["temps"],
-    "Apps": ["app"]
+    "Apps": ["app"],
+    "DB": {"Type":"Postgres",
+           "User":"postgres",
+           "Name":"test"
+    }
 }
