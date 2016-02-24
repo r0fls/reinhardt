@@ -14,6 +14,7 @@ func load_views(appname string) {
 }
 
 func load_models(appname string) {
+	//model.Connect("postgres", "postgres", "localhost", "235711", "test")
 }
 
 func load_app(appname string) {

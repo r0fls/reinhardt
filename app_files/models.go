@@ -10,6 +10,5 @@ func Models() model.Model {
 	M["Customers"].CharacterField("Name")
 	M.AddModel("Invoices")
 	M["Invoices"].IntegerField("Amount")
-	//model.Connect("postgres", "postgres", "localhost", "235711", "test")
 	return M
 }

@@ -42,15 +42,17 @@ type ModelType struct {
 	F    []Field
 }
 
-type Model map[string]ModelType
+type Model map[string]*ModelType
 
 func (m Model) AddModel(name string) {
-	m[name] = ModelType{name, []Field{}}
+	mt := ModelType{name, []Field{}}
+	m[name] = &mt
 }
 
 func NewModel(name string) Model {
-	m := make(map[string]ModelType)
-	m[name] = ModelType{name, []Field{}}
+	m := make(map[string]*ModelType)
+	mt := ModelType{name, []Field{}}
+	m[name] = &mt
 	return m
 }
 
@@ -59,15 +61,12 @@ func (m ModelType) IntegerField(name string) {
 }
 
 func (m ModelType) CharacterField(name string) {
-	m.F = append(m.F, Field{name, "character"})
+	m.F = append(m.F, Field{name, "varchar(80)"})
 }
 
 type Field struct {
 	Name string
-	T    string
-}
-
-type Type struct {
+	Type string
 }
 
 func check(err error) {
@@ -75,11 +74,21 @@ func check(err error) {
 		log.Fatal(err)
 	}
 }
+
 func CreateTable(db *sql.DB, m ModelType) {
 	// needs to loop through all fields
-	s := fmt.Sprintf(`CREATE TABLE %s (%s %s);`, m.Name, m.F[0].Name, m.F[0].T)
-	_, err := db.Query(s)
-	check(err)
+	for i, _ := range m.F {
+		if i == 0 {
+			s := fmt.Sprintf("CREATE TABLE %s (%s %s);", m.Name, m.F[i].Name, m.F[i].Type)
+			_, err := db.Query(s)
+			check(err)
+		} else {
+			s := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s);",
+				m.Name, m.F[i].Name, m.F[i].Type)
+			_, err := db.Query(s)
+			check(err)
+		}
+	}
 }
 
 // this needs to be weary of SQL injection
