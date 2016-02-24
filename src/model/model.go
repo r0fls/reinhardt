@@ -80,7 +80,7 @@ func CreateTable(db *sql.DB, m ModelType) {
 	print("Creating Models", "\n")
 	for i, _ := range m.F {
 		if i == 0 {
-			s := fmt.Sprintf("CREATE TABLE %s (%s %s);", m.Name, m.F[i].Name, m.F[i].Type)
+			s := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (%s %s);", m.Name, m.F[i].Name, m.F[i].Type)
 			_, err := db.Query(s)
 			fmt.Println(s)
 			check(err)
@@ -91,6 +91,12 @@ func CreateTable(db *sql.DB, m ModelType) {
 			fmt.Println(s)
 			check(err)
 		}
+	}
+}
+
+func CreateTables(db *sql.DB, m Model) {
+	for _, model := range m {
+		CreateTable(db, *model)
 	}
 }
 
