@@ -37,9 +37,29 @@ func Connect(dbtype string, username string, dbname string,
 	return db
 }
 
-type Model struct {
+type ModelType struct {
 	Name string
 	F    []Field
+}
+
+type Model map[string]ModelType
+
+func (m Model) AddModel(name string) {
+	m[name] = ModelType{name, []Field{}}
+}
+
+func NewModel(name string) Model {
+	m := make(map[string]ModelType)
+	m[name] = ModelType{name, []Field{}}
+	return m
+}
+
+func (m ModelType) IntegerField(name string) {
+	m.F = append(m.F, Field{name, "integer"})
+}
+
+func (m ModelType) CharacterField(name string) {
+	m.F = append(m.F, Field{name, "character"})
 }
 
 type Field struct {
@@ -55,7 +75,7 @@ func check(err error) {
 		log.Fatal(err)
 	}
 }
-func CreateTable(db *sql.DB, m Model) {
+func CreateTable(db *sql.DB, m ModelType) {
 	// needs to loop through all fields
 	s := fmt.Sprintf(`CREATE TABLE %s (%s %s);`, m.Name, m.F[0].Name, m.F[0].T)
 	_, err := db.Query(s)
@@ -63,7 +83,8 @@ func CreateTable(db *sql.DB, m Model) {
 }
 
 // this needs to be weary of SQL injection
-func Insert(db *sql.DB, m Model) {
+// implement (m Model) func check/sanitize (table_name, values)
+func Insert(db *sql.DB, m ModelType) {
 	// needs to loop through all fields
 	s := fmt.Sprintf(`INSERT INTO %s VALUES (%s);`, m.Name, m.F[0].Name)
 	_, err := db.Query(s)

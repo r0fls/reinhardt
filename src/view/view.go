@@ -2,6 +2,7 @@ package view
 
 import (
 	"fmt"
+	//	"github.com/julienschmidt/httprouter"
 	"html"
 	"io/ioutil"
 	"net/http"
@@ -24,7 +25,7 @@ func Render(template string, base []string) func(w http.ResponseWriter, r *http.
 	}
 }
 
-type View func(context Request, template string) Response
+type View func(template string, base []string) func(w http.ResponseWriter, r *http.Request)
 
 func check(e error) {
 	if e != nil {
