@@ -56,11 +56,11 @@ func NewModel(name string) Model {
 	return m
 }
 
-func (m ModelType) IntegerField(name string) {
+func (m *ModelType) IntegerField(name string) {
 	m.F = append(m.F, Field{name, "integer"})
 }
 
-func (m ModelType) CharacterField(name string) {
+func (m *ModelType) CharacterField(name string) {
 	m.F = append(m.F, Field{name, "varchar(80)"})
 }
 
@@ -77,15 +77,20 @@ func check(err error) {
 
 func CreateTable(db *sql.DB, m ModelType) {
 	// needs to loop through all fields
+	print("Creating Models", "\n")
 	for i, _ := range m.F {
 		if i == 0 {
+			print("i = 0", "\n")
 			s := fmt.Sprintf("CREATE TABLE %s (%s %s);", m.Name, m.F[i].Name, m.F[i].Type)
 			_, err := db.Query(s)
+			fmt.Println(s)
 			check(err)
 		} else {
+			print("i != 0", "\n")
 			s := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s);",
 				m.Name, m.F[i].Name, m.F[i].Type)
 			_, err := db.Query(s)
+			fmt.Println(s)
 			check(err)
 		}
 	}
