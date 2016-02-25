@@ -44,6 +44,8 @@ func run_server(location string) {
 	for i, _ := range Urls {
 		http.Handle(Urls[i].Slug, http.HandlerFunc(Urls[i].View(base)))
 	}
+	fs := http.FileServer(http.Dir(config.StaticDir))
+	http.Handle(fmt.Sprintf("/%s/", config.Static), fs)
 	ap := []string{config.Address, config.Port}
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
 }

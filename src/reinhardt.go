@@ -44,7 +44,8 @@ func new_project(name string) {
 	s = []string{name, "settings.json"}
 	text, err = ioutil.ReadFile("app_files/settings.json")
 	check(err)
-	err = ioutil.WriteFile(strings.Join(s, "/"), []byte(fmt.Sprintf(string(text), name, os.Getenv("GOPATH"))), 0644)
+	dir, _ := os.Getwd()
+	err = ioutil.WriteFile(strings.Join(s, "/"), []byte(fmt.Sprintf(string(text), dir, name, os.Getenv("GOPATH"))), 0644)
 	check(err)
 
 	s = []string{name, "manager.go"}

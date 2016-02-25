@@ -1,8 +1,10 @@
 {
     "Address": "127.0.0.1",
     "Port": "8000",
-    "Home": "/home/r0fls/Desktop/code/gowork/src/github.com/r0fls/reinhardt/%s",
+    "Home": "%s/%s",
     "GOPATH": "%s", 
+    "Static": "static", 
+    "StaticDir": "app/static", 
     "Templates": ["temps"],
     "Apps": ["app"],
     "DB": {"Type":"postgres",

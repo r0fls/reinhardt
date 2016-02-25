@@ -8,6 +8,8 @@ import (
 
 type Config struct {
 	Address   string
+	Static    string
+	StaticDir string
 	Port      string
 	Home      string
 	Templates []string
