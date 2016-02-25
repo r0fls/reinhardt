@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/r0fls/reinhardt/src/config"
 	"github.com/r0fls/reinhardt/test/app"
 	"io/ioutil"
 	"log"
@@ -16,27 +17,17 @@ func load_views(appname string) {
 
 func load_models(appname string) {
 	//model.Connect("postgres", "postgres", "test", "localhost", "235711")
+	c := config.Load_config("settings.json")
+	print(c.DB.Name, "\n")
+	print(c.DB.Type, "\n")
+	print(c.DB.IP, "\n")
+	print(c.DB.Pass, "\n")
+	print(c.DB.User, "\n")
+
 }
 
 func load_app(appname string) {
 	//http.Handle("/foo", fooHandler)
-}
-
-type Config struct {
-	Address   string
-	Port      string
-	Home      string
-	Templates []string
-	Apps      []string
-	DB        DBConfig
-}
-
-type DBConfig struct {
-	Type string
-	User string
-	Name string
-	IP   string
-	Pass string
 }
 
 func check(e error) {
@@ -45,19 +36,8 @@ func check(e error) {
 	}
 }
 
-func load_config(location string) Config {
-	file, _ := os.Open(location)
-	decoder := json.NewDecoder(file)
-	config := Config{}
-	err := decoder.Decode(&config)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	return config
-}
-
 func run_server(location string) {
-	config := load_config(location)
+	config := config.Load_config(location)
 	// should loop through all apps
 	base := []string{config.Home, config.Apps[0], config.Templates[0]}
 	Urls := app.Urls()
@@ -69,7 +49,7 @@ func run_server(location string) {
 }
 
 func init() {
-	config := load_config("settings.json")
+	config := config.Load_config("settings.json")
 	s := []string{"app", "models", ".settings.json"}
 	fileJson, _ := json.Marshal(config.DB)
 	err := ioutil.WriteFile(strings.Join(s, "/"), fileJson, 0644)
@@ -81,5 +61,7 @@ func main() {
 		fmt.Println("Requires more args")
 	} else if os.Args[1] == "runserver" {
 		run_server("settings.json")
+	} else if os.Args[1] == "syncdb" {
+		load_models("settings.json")
 	}
 }

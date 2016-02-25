@@ -2,9 +2,9 @@ package model
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	_ "github.com/lib/pq"
+	"github.com/r0fls/reinhardt/src/config"
 	"log"
 	"os"
 	"strings"
@@ -27,14 +27,6 @@ import (
 // Takes a db type (eg. postgres) username and dbname (should take pswd too)
 // This should only be called once, and reused for all connections after (leave
 // connections open)
-
-type DBConfig struct {
-	Type string
-	User string
-	Name string
-	IP   string
-	Pass string
-}
 
 type ModelType struct {
 	Name string
@@ -82,20 +74,20 @@ func NewModel(name string) Model {
 	return m
 }
 
-func configConnect(config DBConfig) *sql.DB {
-	return Connect(config.Type, config.User, config.Name, config.IP, config.Pass)
+func configConnect(config config.Config) *sql.DB {
+	return Connect(config.DB.Type, config.DB.User, config.DB.Name, config.DB.IP, config.DB.Pass)
 }
 
 func Register(m Model) Connection {
 	dir, _ := os.Getwd()
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	print(f, "\n")
-	config := Load_config(f)
-	print(config.Name, "\n")
-	print(config.Type, "\n")
-	print(config.Pass, "\n")
-	print(config.User, "\n")
-	print(config.IP, "\n")
+	config := config.Load_config(f)
+	print(config.DB.Name, "\n")
+	print(config.DB.Type, "\n")
+	print(config.DB.Pass, "\n")
+	print(config.DB.User, "\n")
+	print(config.DB.IP, "\n")
 	db := configConnect(config)
 	return Connection{m, db}
 }
@@ -216,15 +208,4 @@ func get(db *sql.DB, column string, table string, filter string) *sql.Rows {
 	rows, err := db.Query(s, filter)
 	check(err)
 	return rows
-}
-
-func Load_config(location string) DBConfig {
-	file, _ := os.Open(location)
-	decoder := json.NewDecoder(file)
-	config := DBConfig{}
-	err := decoder.Decode(&config)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	return config
 }
