@@ -2,9 +2,11 @@ package model
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -13,11 +15,8 @@ import (
 //    -- uses settings
 // 2. create database from models
 //    FIELDS
-//    a. Int
-//    b. Float
-//    c. String
-//    d. Bool
-//    e. Datetime
+//    a. Datetime
+//    b. Time
 // 3. create functions that allow access from views
 //    a. insert
 //    b. update
@@ -29,12 +28,25 @@ import (
 // This should only be called once, and reused for all connections after (leave
 // connections open)
 
+type DBConfig struct {
+	Type string
+	User string
+	Name string
+	IP   string
+	Pass string
+}
+
 type ModelType struct {
 	Name string
 	F    []Field
 }
 
 type Model map[string]*ModelType
+
+type Connection struct {
+	Models Model
+	DB     *sql.DB
+}
 
 type Field struct {
 	Name string
@@ -70,12 +82,74 @@ func NewModel(name string) Model {
 	return m
 }
 
-func (m *ModelType) IntegerField(name string) {
-	m.F = append(m.F, Field{name, "integer"})
+func configConnect(config DBConfig) *sql.DB {
+	return Connect(config.Type, config.User, config.Name, config.IP, config.Pass)
 }
 
-func (m *ModelType) CharacterField(name string) {
-	m.F = append(m.F, Field{name, "varchar(80)"})
+func Register(m Model) Connection {
+	dir, _ := os.Getwd()
+	f := strings.Join([]string{dir, "settings.json"}, "/")
+	print(f, "\n")
+	config := Load_config(f)
+	print(config.Name, "\n")
+	print(config.Type, "\n")
+	print(config.Pass, "\n")
+	print(config.User, "\n")
+	print(config.IP, "\n")
+	db := configConnect(config)
+	return Connection{m, db}
+}
+
+// These are all for postgres right now -- should take
+// DB type as argument
+
+// Should implement the following types with their spelling, as
+// they are specified by SQL (http://www.postgresql.org/docs/9.4/static/datatype.html):
+// bigint, bit, bit varying, boolean, char, character varying, character, varchar,
+// date, double precision, integer, interval, numeric, decimal, real, smallint, time
+// (with or without time zone), timestamp (with or without time zone), xml.
+
+// this should accept additional arguments (default, etc..)
+func (m *ModelType) IntegerField(args ...string) {
+	m.F = append(m.F, Field{args[0], "integer"})
+}
+
+func (m *ModelType) CharacterField(args ...string) {
+	m.F = append(m.F, Field{args[0], "varchar(80)"})
+}
+
+// should implement float8 as an option
+func (m *ModelType) RealField(args ...string) {
+	m.F = append(m.F, Field{args[0], "float4"})
+}
+
+// should implement float8 as an option
+func (m *ModelType) TextField(args ...string) {
+	m.F = append(m.F, Field{args[0], "text"})
+}
+
+func (m *ModelType) JsonField(args ...string) {
+	m.F = append(m.F, Field{args[0], "json"})
+}
+
+func (m *ModelType) JsonBField(args ...string) {
+	m.F = append(m.F, Field{args[0], "bjson"})
+}
+
+func (m *ModelType) ByteField(args ...string) {
+	m.F = append(m.F, Field{args[0], "bytea"})
+}
+
+func (m *ModelType) BooleanField(args ...string) {
+	m.F = append(m.F, Field{args[0], "bool"})
+}
+
+func (m *ModelType) XmlField(args ...string) {
+	m.F = append(m.F, Field{args[0], "xml"})
+}
+
+func (m *ModelType) UuidField(args ...string) {
+	m.F = append(m.F, Field{args[0], "uuid"})
 }
 
 func check(err error) {
@@ -111,19 +185,29 @@ func CreateTable(db *sql.DB, m ModelType) {
 	}
 }
 
-func CreateTables(db *sql.DB, m Model) {
-	for _, model := range m {
-		CreateTable(db, *model)
+func (c Connection) CreateTables() {
+	for _, model := range c.Models {
+		CreateTable(c.DB, *model)
 	}
 }
 
 // this needs a custom formatting function:
 // if string - wrap in ''; int - nowrap, etc..
-func (m *ModelType) Insert(db *sql.DB, v Value) {
-	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES (%s);",
-		m.Name, strings.Join(v.Cols, ", "),
-		strings.Join(v.Row, " "))
+func (m *ModelType) insert(db *sql.DB, v []string) {
+	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES ('%s');",
+		m.Name, strings.Join(m.Cols(), ", "),
+		strings.Join(v, "', '"))
+	fmt.Println(s)
 	_, err := db.Query(s)
+	check(err)
+}
+
+func (c Connection) Insert(model string, v []string) {
+	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES ('%s');",
+		c.Models[model].Name, strings.Join(c.Models[model].Cols(), ", "),
+		strings.Join(v, "', '"))
+	fmt.Println(s)
+	_, err := c.DB.Query(s)
 	check(err)
 }
 
@@ -132,4 +216,15 @@ func get(db *sql.DB, column string, table string, filter string) *sql.Rows {
 	rows, err := db.Query(s, filter)
 	check(err)
 	return rows
+}
+
+func Load_config(location string) DBConfig {
+	file, _ := os.Open(location)
+	decoder := json.NewDecoder(file)
+	config := DBConfig{}
+	err := decoder.Decode(&config)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	return config
 }

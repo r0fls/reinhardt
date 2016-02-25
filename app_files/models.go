@@ -12,3 +12,7 @@ func Models() model.Model {
 	M["Invoices"].IntegerField("Amount")
 	return M
 }
+
+func Model() model.Connection {
+	return model.Register(Models())
+}

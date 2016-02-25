@@ -5,8 +5,10 @@
     "GOPATH": "%s", 
     "Templates": ["temps"],
     "Apps": ["app"],
-    "DB": {"Type":"Postgres",
+    "DB": {"Type":"postgres",
            "User":"postgres",
-           "Name":"test"
+           "Name":"test",
+           "IP":"localhost",
+           "Pass":"235711",
     }
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/r0fls/reinhardt/test/app"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -34,6 +35,8 @@ type DBConfig struct {
 	Type string
 	User string
 	Name string
+	IP   string
+	Pass string
 }
 
 func check(e error) {
@@ -63,6 +66,14 @@ func run_server(location string) {
 	}
 	ap := []string{config.Address, config.Port}
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
+}
+
+func init() {
+	config := load_config("settings.json")
+	s := []string{"app", "models", ".settings.json"}
+	fileJson, _ := json.Marshal(config.DB)
+	err := ioutil.WriteFile(strings.Join(s, "/"), fileJson, 0644)
+	check(err)
 }
 
 func main() {
