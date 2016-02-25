@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/lib/pq"
 	"log"
+	"strings"
 )
 
 // TODO
@@ -27,6 +28,26 @@ import (
 // Takes a db type (eg. postgres) username and dbname (should take pswd too)
 // This should only be called once, and reused for all connections after (leave
 // connections open)
+
+type ModelType struct {
+	Name string
+	F    []Field
+}
+
+type Model map[string]*ModelType
+
+type Field struct {
+	Name string
+	Type string
+}
+
+type Fields []Field
+
+type Value struct {
+	Cols []string
+	Row  []string
+}
+
 func Connect(dbtype string, username string, dbname string,
 	ip string, password string) *sql.DB {
 
@@ -36,13 +57,6 @@ func Connect(dbtype string, username string, dbname string,
 	check(err)
 	return db
 }
-
-type ModelType struct {
-	Name string
-	F    []Field
-}
-
-type Model map[string]*ModelType
 
 func (m Model) AddModel(name string) {
 	mt := ModelType{name, []Field{}}
@@ -64,15 +78,18 @@ func (m *ModelType) CharacterField(name string) {
 	m.F = append(m.F, Field{name, "varchar(80)"})
 }
 
-type Field struct {
-	Name string
-	Type string
-}
-
 func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (m ModelType) Cols() []string {
+	var cols []string
+	for _, field := range m.F {
+		cols = append(cols, field.Name)
+	}
+	return cols
 }
 
 func CreateTable(db *sql.DB, m ModelType) {
@@ -100,11 +117,12 @@ func CreateTables(db *sql.DB, m Model) {
 	}
 }
 
-// this needs to be weary of SQL injection
-// implement (m Model) func check/sanitize (table_name, values)
-func Insert(db *sql.DB, m ModelType) {
-	// needs to loop through all fields
-	s := fmt.Sprintf(`INSERT INTO %s VALUES (%s);`, m.Name, m.F[0].Name)
+// this needs a custom formatting function:
+// if string - wrap in ''; int - nowrap, etc..
+func (m *ModelType) Insert(db *sql.DB, v Value) {
+	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES (%s);",
+		m.Name, strings.Join(v.Cols, ", "),
+		strings.Join(v.Row, " "))
 	_, err := db.Query(s)
 	check(err)
 }
