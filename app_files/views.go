@@ -8,6 +8,6 @@ import (
 )
 
 // Default home
-func Home(base []string) func(w http.ResponseWriter, r *http.Request) {
-	return view.Render("home.html", base)
+func Home(w http.ResponseWriter, r *http.Request) {
+	view.Render("home.html", view.Request{r, w})
 }

@@ -39,10 +39,9 @@ func check(e error) {
 func run_server(location string) {
 	config := config.Load_config(location)
 	// should loop through all apps
-	base := []string{config.Home, config.Apps[0], config.Templates[0]}
 	Urls := app.Urls()
 	for i, _ := range Urls {
-		http.Handle(Urls[i].Slug, http.HandlerFunc(Urls[i].View(base)))
+		http.Handle(Urls[i].Slug, http.HandlerFunc(Urls[i].View))
 	}
 	fs := http.FileServer(http.Dir(config.StaticDir))
 	http.Handle(fmt.Sprintf("/%s/", config.Static), fs)
