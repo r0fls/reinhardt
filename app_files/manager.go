@@ -35,8 +35,11 @@ func run_server(location string) {
 	// should loop through all apps
 	Urls := app.Urls()
 	http.Handle("/", http.HandlerFunc(Urls.Routes))
-	fs := http.FileServer(http.Dir(config.StaticDir))
-	http.Handle(fmt.Sprintf("/%s/", config.Static), fs)
+	if config.StaticDir != "" {
+		fs := http.FileServer(http.Dir(config.StaticDir))
+		static := fmt.Sprintf("/%s/", config.Static)
+		http.Handle(static, http.StripPrefix(static, fs))
+	}
 	ap := []string{config.Address, config.Port}
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
 }
