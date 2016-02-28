@@ -5,9 +5,9 @@ import (
 	"github.com/r0fls/reinhardt/test/app/views"
 )
 
-func Urls() []url.Url {
+func Urls() url.Urls {
 	return []url.Url{
-		url.Url{"/bar", views.Home},
-		url.Url{"/", views.Home},
+		url.URL("/bar", views.Home),
+		url.URL("/$", views.Home),
 	}
 }

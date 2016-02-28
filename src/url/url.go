@@ -2,6 +2,7 @@ package url
 
 import (
 	//"github.com/r0fls/reinhardt/src/view"
+	"fmt"
 	"net/http"
 	"regexp"
 )
@@ -9,43 +10,35 @@ import (
 type Url struct {
 	Slug string
 	View func(http.ResponseWriter, *http.Request)
+	Re   *regexp.Regexp
 	//View view.View
 }
 
-type route struct {
-	pattern *regexp.Regexp
-	handler http.Handler
+func URL(pattern string, v func(http.ResponseWriter, *http.Request)) Url {
+	re := regexp.MustCompile(pattern)
+	return Url{pattern, v, re}
 }
 
-type RegexpHandler struct {
-	routes []*route
+func (u Url) Route(w http.ResponseWriter, r *http.Request) {
+	re, err := regexp.Compile(u.Slug)
+	print(err, "\n")
+	print(r.URL.Path, "\n")
+	if re.MatchString(r.URL.Path) {
+		u.View(w, r)
+	} else {
+		http.NotFound(w, r)
+	}
 }
 
-func New(urls []Url) RegexpHandler {
-	r := make([]*route, len(urls))
-	return RegexpHandler{r}
-}
+type Urls []Url
 
-func (h *RegexpHandler) handler(pattern *regexp.Regexp, handler http.Handler) {
-	h.routes = append(h.routes, &route{pattern, handler})
-}
-
-func (h *RegexpHandler) Handler(pattern string, handler http.Handler) {
-	re, _ := regexp.Compile(pattern)
-	h.routes = append(h.routes, &route{re, handler})
-}
-
-func (h *RegexpHandler) HandleFunc(pattern *regexp.Regexp, handler func(http.ResponseWriter, *http.Request)) {
-	h.routes = append(h.routes, &route{pattern, http.HandlerFunc(handler)})
-}
-
-func (h *RegexpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	for _, route := range h.routes {
-		if route.pattern.MatchString(r.URL.Path) {
-			route.handler.ServeHTTP(w, r)
+func (urls Urls) Routes(w http.ResponseWriter, r *http.Request) {
+	for _, u := range urls {
+		if u.Re.MatchString(r.URL.Path) {
+			u.View(w, r)
 			return
 		}
 	}
-	// no pattern matched; send 404 response
-	http.NotFound(w, r)
+
+	w.Write([]byte(fmt.Sprintf("Did not match:%s", r.URL.Path)))
 }

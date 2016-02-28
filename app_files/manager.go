@@ -9,21 +9,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
 
 func load_views(appname string) {
 }
 
-func load_models(appname string) {
-	//model.Connect("postgres", "postgres", "test", "localhost", "235711")
-	c := config.Load_config("settings.json")
-	print(c.DB.Name, "\n")
-	print(c.DB.Type, "\n")
-	print(c.DB.IP, "\n")
-	print(c.DB.Pass, "\n")
+func load_models(location string) {
+	c := config.Load_config(location)
 	print(c.DB.User, "\n")
-
 }
 
 func load_app(appname string) {
@@ -40,9 +35,7 @@ func run_server(location string) {
 	config := config.Load_config(location)
 	// should loop through all apps
 	Urls := app.Urls()
-	for i, _ := range Urls {
-		http.Handle(Urls[i].Slug, http.HandlerFunc(Urls[i].View))
-	}
+	http.Handle("/", http.HandlerFunc(Urls.Routes))
 	fs := http.FileServer(http.Dir(config.StaticDir))
 	http.Handle(fmt.Sprintf("/%s/", config.Static), fs)
 	ap := []string{config.Address, config.Port}
