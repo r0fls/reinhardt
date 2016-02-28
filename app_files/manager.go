@@ -44,14 +44,6 @@ func run_server(location string) {
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
 }
 
-func init() {
-	config := config.Load_config("settings.json")
-	s := []string{"app", "models", ".settings.json"}
-	fileJson, _ := json.Marshal(config.DB)
-	err := ioutil.WriteFile(strings.Join(s, "/"), fileJson, 0644)
-	check(err)
-}
-
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Requires more args")
