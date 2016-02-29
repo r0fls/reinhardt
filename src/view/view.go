@@ -25,7 +25,7 @@ func Render(template string, r Request) {
 	fmt.Fprintf(r.Response, string(text), html.EscapeString(r.Request.URL.Path))
 }
 
-type View func(template string, base []string) func(w http.ResponseWriter, r *http.Request)
+type View func(Request)
 
 func check(e error) {
 	if e != nil {

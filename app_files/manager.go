@@ -1,11 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/r0fls/reinhardt/src/config"
 	"github.com/r0fls/reinhardt/test/app"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
