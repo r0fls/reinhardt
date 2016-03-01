@@ -1,9 +1,10 @@
 package view
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/r0fls/reinhardt/src/config"
-	"html"
+	"github.com/r0fls/reinhardt/src/template"
+	//"html"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -15,14 +16,16 @@ type Request struct {
 	Response http.ResponseWriter
 }
 
-func Render(template string, r Request) {
+func Render(temp string, r Request) {
 	dir, _ := os.Getwd()
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	config := config.Load_config(f)
-	f = strings.Join([]string{config.Home, config.Apps[0], config.Templates[0], template}, "/")
+	f = strings.Join([]string{config.Home, config.Apps[0], config.Templates[0], temp}, "/")
+	s := template.Sub{config.Static}
 	text, err := ioutil.ReadFile(f)
+	template.Load(string(text), s, r.Response)
 	check(err)
-	fmt.Fprintf(r.Response, string(text), html.EscapeString(r.Request.URL.Path))
+	//fmt.Fprintf(r.Response, string(text), html.EscapeString(r.Request.URL.Path))
 }
 
 type View func(Request)

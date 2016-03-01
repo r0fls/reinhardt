@@ -4,7 +4,6 @@ package views
 
 import (
 	"github.com/r0fls/reinhardt/src/view"
-	"net/http"
 )
 
 // Default home
