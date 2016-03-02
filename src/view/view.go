@@ -2,6 +2,7 @@ package view
 
 import (
 	//"fmt"
+	"encoding/json"
 	"github.com/r0fls/reinhardt/src/config"
 	"github.com/r0fls/reinhardt/src/template"
 	//"html"
@@ -26,6 +27,12 @@ func Render(temp string, r Request) {
 	template.Load(string(text), s, r.Response)
 	check(err)
 	//fmt.Fprintf(r.Response, string(text), html.EscapeString(r.Request.URL.Path))
+}
+
+func RenderJSON(m interface{}, r Request) {
+	enc := json.NewEncoder(r.Response)
+	err := enc.Encode(m)
+	check(err)
 }
 
 type View func(Request)
