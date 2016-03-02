@@ -32,6 +32,7 @@ func Render(temp string, r Request) {
 func RenderJSON(m interface{}, r Request) {
 	enc := json.NewEncoder(r.Response)
 	err := enc.Encode(m)
+	r.Response.Header().Set("Content-Type", "application/json")
 	check(err)
 }
 
