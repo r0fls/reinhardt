@@ -18,7 +18,7 @@ func new_project(name string) {
 	os.MkdirAll(strings.Join(m, "/"), 0700)
 
 	s := []string{name, "app", "models", "models.go"}
-	text, err := ioutil.ReadFile("app_files/models.go")
+	text, err := ioutil.ReadFile("src/app_files/models.go")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
@@ -27,7 +27,7 @@ func new_project(name string) {
 	os.Mkdir(strings.Join(v, "/"), 0700)
 
 	s = []string{name, "app", "views", "views.go"}
-	text, err = ioutil.ReadFile("app_files/views.go")
+	text, err = ioutil.ReadFile("src/app_files/views.go")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
@@ -36,26 +36,26 @@ func new_project(name string) {
 	os.Mkdir(strings.Join(t, "/"), 0700)
 
 	s = []string{name, "app", "temps", "home.html"}
-	text, err = ioutil.ReadFile("app_files/home.html")
+	text, err = ioutil.ReadFile("src/app_files/home.html")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
 
 	s = []string{name, "settings.json"}
-	text, err = ioutil.ReadFile("app_files/settings.json")
+	text, err = ioutil.ReadFile("src/app_files/settings.json")
 	check(err)
 	dir, _ := os.Getwd()
 	err = ioutil.WriteFile(strings.Join(s, "/"), []byte(fmt.Sprintf(string(text), dir, name, os.Getenv("GOPATH"))), 0644)
 	check(err)
 
 	s = []string{name, "manager.go"}
-	text, err = ioutil.ReadFile("app_files/manager.go")
+	text, err = ioutil.ReadFile("src/app_files/manager.go")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
 
 	s = []string{name, "app", "urls.go"}
-	text, err = ioutil.ReadFile("app_files/urls.go")
+	text, err = ioutil.ReadFile("src/app_files/urls.go")
 	check(err)
 	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
 	check(err)
