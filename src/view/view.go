@@ -21,7 +21,7 @@ func Render(temp string, r Request) {
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	config := config.Load_config(f)
 	f = strings.Join([]string{config.Home, config.Apps[0], config.Templates[0], temp}, "/")
-	s := template.Sub{config.Static}
+	s := template.Sub{config.Static, r.Request.URL.Path}
 	text, err := ioutil.ReadFile(f)
 	template.Load(string(text), s, r.Response)
 	check(err)

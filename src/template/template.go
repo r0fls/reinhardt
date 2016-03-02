@@ -8,6 +8,7 @@ import (
 
 type Sub struct {
 	Static string
+	Path   string
 }
 
 func check(err error) {
