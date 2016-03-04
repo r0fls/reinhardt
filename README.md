@@ -1,6 +1,6 @@
 # reinhardt
 
-This is a golang MVC modeled loosely off of Django. Still in pre-alpha. The areas that still need the most work are models and templates.
+This is a golang MVC modeled loosely off of Django. Still in pre-alpha.
 
 ### Getting Started
 
