@@ -4,12 +4,13 @@ import (
 	//"fmt"
 	"encoding/json"
 	"github.com/r0fls/reinhardt/src/config"
-	"github.com/r0fls/reinhardt/src/template"
 	//"html"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strings"
+	"text/template"
 )
 
 type Request struct {
@@ -17,16 +18,30 @@ type Request struct {
 	Response http.ResponseWriter
 }
 
+type TemplateConfig struct {
+	Config  config.Config
+	Request Request
+}
+
+func (t TemplateConfig) Load(text string, name ...string) {
+	if len(name) == 0 {
+		name = append(name, "template")
+	}
+	tmpl, err := template.New(name[0]).Parse(text)
+	check(err)
+	err = tmpl.Execute(t.Request.Response, t)
+	check(err)
+}
+
 func Render(temp string, r Request) {
 	dir, _ := os.Getwd()
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	config := config.Load_config(f)
 	f = strings.Join([]string{config.Home, config.Apps[0], config.Templates[0], temp}, "/")
-	s := template.Sub{config.Static, r.Request.URL.Path}
+	t := TemplateConfig{config, r}
 	text, err := ioutil.ReadFile(f)
-	template.Load(string(text), s, r.Response)
+	t.Load(string(text))
 	check(err)
-	//fmt.Fprintf(r.Response, string(text), html.EscapeString(r.Request.URL.Path))
 }
 
 func RenderJSON(m interface{}, r Request) {
@@ -40,6 +55,6 @@ type View func(Request)
 
 func check(e error) {
 	if e != nil {
-		panic(e)
+		log.Fatal(e)
 	}
 }

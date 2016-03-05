@@ -204,7 +204,7 @@ func (c Connection) Insert(model string, v []string) {
 }
 
 func get(db *sql.DB, column string, table string, filter string) *sql.Rows {
-	s := fmt.Sprintf("SELECT %s FROM %s WHERE age=?", table, column)
+	s := fmt.Sprintf("SELECT %s FROM %s WHERE %s=?", column, table, column)
 	rows, err := db.Query(s, filter)
 	check(err)
 	return rows
