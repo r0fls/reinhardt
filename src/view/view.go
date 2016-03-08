@@ -1,10 +1,8 @@
 package view
 
 import (
-	//"fmt"
 	"encoding/json"
 	"github.com/r0fls/reinhardt/src/config"
-	//"html"
 	"io/ioutil"
 	"log"
 	"net/http"
