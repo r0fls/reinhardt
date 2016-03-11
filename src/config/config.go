@@ -12,6 +12,7 @@ type Config struct {
 	StaticDir string
 	Port      string
 	Home      string
+	Local     string
 	Templates []string
 	Apps      []string
 	DB        DBConfig

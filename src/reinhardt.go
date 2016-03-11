@@ -2,9 +2,11 @@ package reinhardt
 
 import (
 	"fmt"
+	"github.com/r0fls/reinhardt/src/config"
 	"io/ioutil"
 	"os"
 	"strings"
+	"text/template"
 )
 
 func check(e error) {
@@ -45,13 +47,21 @@ func new_project(name string) {
 	text, err = ioutil.ReadFile("src/app_files/settings.json")
 	check(err)
 	dir, _ := os.Getwd()
-	err = ioutil.WriteFile(strings.Join(s, "/"), []byte(fmt.Sprintf(string(text), dir, name, os.Getenv("GOPATH"))), 0644)
+	gopath := os.Getenv("GOPATH")
+	local := strings.Replace(dir, gopath, "", 1)
+	local = strings.Replace(local, "src", "", 1)
+	local = strings.Join([]string{strings.Replace(local, "//", "", 1), name}, "/")
+	err = ioutil.WriteFile(strings.Join(s, "/"), []byte(fmt.Sprintf(string(text), dir, name, gopath, local)), 0644)
 	check(err)
 
+	c := config.Load_config(strings.Join(s, "/"))
 	s = []string{name, "manager.go"}
 	text, err = ioutil.ReadFile("src/app_files/manager.go")
 	check(err)
-	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
+	tmpl, _ := template.New("manager").Parse(string(text))
+	f, err := os.Create(strings.Join(s, "/"))
+	check(err)
+	err = tmpl.Execute(f, c)
 	check(err)
 
 	s = []string{name, "app", "urls.go"}

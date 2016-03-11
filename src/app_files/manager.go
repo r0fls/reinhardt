@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/r0fls/reinhardt/src/config"
-	"github.com/r0fls/reinhardt/test/app"
+	"{{.Local}}/{{index .Apps 0}}"
 	"log"
 	"net/http"
 	"os"
