@@ -2,8 +2,7 @@ package app
 
 import (
 	"github.com/r0fls/reinhardt/src/url"
-	//{{.App}}/views
-	"github.com/r0fls/reinhardt/test/app/views"
+	"{{.Local}}/{{index .Apps 0}}/views"
 )
 
 func Urls() url.Urls {

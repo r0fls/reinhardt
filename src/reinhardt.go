@@ -67,7 +67,10 @@ func new_project(name string) {
 	s = []string{name, "app", "urls.go"}
 	text, err = ioutil.ReadFile("src/app_files/urls.go")
 	check(err)
-	err = ioutil.WriteFile(strings.Join(s, "/"), text, 0644)
+	tmpl, _ = template.New("urls").Parse(string(text))
+	f, err = os.Create(strings.Join(s, "/"))
+	check(err)
+	err = tmpl.Execute(f, c)
 	check(err)
 }
 
