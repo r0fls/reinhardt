@@ -49,8 +49,8 @@ func new_project(name string) {
 	dir, _ := os.Getwd()
 	gopath := os.Getenv("GOPATH")
 	local := strings.Replace(dir, gopath, "", 1)
-	local = strings.Replace(local, "src", "", 1)
-	local = strings.Join([]string{strings.Replace(local, "//", "", 1), name}, "/")
+	local = strings.Replace(local, "src/", "", 1)
+	local = strings.Join([]string{local, name}, "/")
 	err = ioutil.WriteFile(strings.Join(s, "/"), []byte(fmt.Sprintf(string(text), dir, name, gopath, local)), 0644)
 	check(err)
 
