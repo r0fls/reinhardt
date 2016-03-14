@@ -11,13 +11,10 @@ import (
 )
 
 // TODO
-// 1. connect function
-//    -- uses settings
-// 2. create database from models
-//    FIELDS
-//    a. Datetime
-//    b. Time
-// 3. create functions that allow access from views
+// 1. create database from models
+//    a. Handle optional args (unique, etc...)
+//    b. constraints (using func or args in initializer funcs)
+// 2. create functions that allow access from views
 //    a. insert
 //    b. update
 //    c. delete
@@ -81,13 +78,7 @@ func configConnect(config config.Config) *sql.DB {
 func Register(m Model) Connection {
 	dir, _ := os.Getwd()
 	f := strings.Join([]string{dir, "settings.json"}, "/")
-	print(f, "\n")
 	config := config.Load_config(f)
-	print(config.DB.Name, "\n")
-	print(config.DB.Type, "\n")
-	print(config.DB.Pass, "\n")
-	print(config.DB.User, "\n")
-	print(config.DB.IP, "\n")
 	db := configConnect(config)
 	return Connection{m, db}
 }
@@ -115,9 +106,20 @@ func (m *ModelType) RealField(args ...string) {
 	m.F = append(m.F, Field{args[0], "float4"})
 }
 
-// should implement float8 as an option
 func (m *ModelType) TextField(args ...string) {
 	m.F = append(m.F, Field{args[0], "text"})
+}
+
+func (m *ModelType) DateField(args ...string) {
+	m.F = append(m.F, Field{args[0], "date"})
+}
+
+func (m *ModelType) TimeField(args ...string) {
+	m.F = append(m.F, Field{args[0], "time"})
+}
+
+func (m *ModelType) TimestampField(args ...string) {
+	m.F = append(m.F, Field{args[0], "timestamp"})
 }
 
 func (m *ModelType) JsonField(args ...string) {
@@ -159,7 +161,6 @@ func (m ModelType) Cols() []string {
 }
 
 func CreateTable(db *sql.DB, m ModelType) {
-	// needs to loop through all fields
 	print("Creating Models", "\n")
 	for i, _ := range m.F {
 		if i == 0 {
@@ -183,8 +184,6 @@ func (c Connection) CreateTables() {
 	}
 }
 
-// this needs a custom formatting function:
-// if string - wrap in ''; int - nowrap, etc..
 func (m *ModelType) insert(db *sql.DB, v []string) {
 	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES ('%s');",
 		m.Name, strings.Join(m.Cols(), ", "),
