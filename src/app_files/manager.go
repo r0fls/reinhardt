@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/r0fls/reinhardt/src/config"
 	"{{.Local}}/{{index .Apps 0}}"
+	"{{.Local}}/{{index .Apps 0}}/models"
+	"github.com/r0fls/reinhardt/src/config"
 	"log"
 	"net/http"
 	"os"
@@ -14,8 +15,7 @@ func load_views(appname string) {
 }
 
 func load_models(location string) {
-	c := config.Load_config(location)
-	print(c.DB.User, "\n")
+	models.Models().CreateTables()
 }
 
 func load_app(appname string) {

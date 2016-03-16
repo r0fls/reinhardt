@@ -28,14 +28,10 @@ import (
 type ModelType struct {
 	Name string
 	F    []Field
+	DB   *sql.DB
 }
 
 type Model map[string]*ModelType
-
-type Connection struct {
-	Models Model
-	DB     *sql.DB
-}
 
 type Field struct {
 	Name string
@@ -59,28 +55,28 @@ func Connect(dbtype string, username string, dbname string,
 	return db
 }
 
+func configConnect(config config.Config) *sql.DB {
+	return Connect(config.DB.Type, config.DB.User, config.DB.Name, config.DB.IP, config.DB.Pass)
+}
+
 func (m Model) AddModel(name string) {
-	mt := ModelType{name, []Field{}}
+	dir, _ := os.Getwd()
+	f := strings.Join([]string{dir, "settings.json"}, "/")
+	config := config.Load_config(f)
+	db := configConnect(config)
+	mt := ModelType{name, []Field{}, db}
 	m[name] = &mt
 }
 
 func NewModel(name string) Model {
 	m := make(map[string]*ModelType)
-	mt := ModelType{name, []Field{}}
-	m[name] = &mt
-	return m
-}
-
-func configConnect(config config.Config) *sql.DB {
-	return Connect(config.DB.Type, config.DB.User, config.DB.Name, config.DB.IP, config.DB.Pass)
-}
-
-func Register(m Model) Connection {
 	dir, _ := os.Getwd()
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	config := config.Load_config(f)
 	db := configConnect(config)
-	return Connection{m, db}
+	mt := ModelType{name, []Field{}, db}
+	m[name] = &mt
+	return m
 }
 
 // These are all for postgres right now -- should take
@@ -160,45 +156,45 @@ func (m ModelType) Cols() []string {
 	return cols
 }
 
-func CreateTable(db *sql.DB, m ModelType) {
+func CreateTable(m ModelType) {
 	print("Creating Models", "\n")
 	for i, _ := range m.F {
 		if i == 0 {
 			s := fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (%s %s);", m.Name, m.F[i].Name, m.F[i].Type)
-			_, err := db.Query(s)
+			_, err := m.DB.Query(s)
 			fmt.Println(s)
 			check(err)
 		} else {
 			s := fmt.Sprintf("ALTER TABLE %s ADD COLUMN %s %s;",
 				m.Name, m.F[i].Name, m.F[i].Type)
-			_, err := db.Query(s)
+			_, err := m.DB.Query(s)
 			fmt.Println(s)
 			check(err)
 		}
 	}
 }
 
-func (c Connection) CreateTables() {
-	for _, model := range c.Models {
-		CreateTable(c.DB, *model)
+func (m Model) CreateTables() {
+	for _, model := range m {
+		CreateTable(*model)
 	}
 }
 
-func (m *ModelType) insert(db *sql.DB, v []string) {
+func (m *ModelType) Insert(v []string) {
 	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES ('%s');",
 		m.Name, strings.Join(m.Cols(), ", "),
 		strings.Join(v, "', '"))
 	fmt.Println(s)
-	_, err := db.Query(s)
+	_, err := m.DB.Query(s)
 	check(err)
 }
 
-func (c Connection) Insert(model string, v []string) {
+func (m Model) Insert(model string, v []string) {
 	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES ('%s');",
-		c.Models[model].Name, strings.Join(c.Models[model].Cols(), ", "),
+		m[model].Name, strings.Join(m[model].Cols(), ", "),
 		strings.Join(v, "', '"))
 	fmt.Println(s)
-	_, err := c.DB.Query(s)
+	_, err := m[model].DB.Query(s)
 	check(err)
 }
 
