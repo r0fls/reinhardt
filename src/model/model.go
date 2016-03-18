@@ -25,10 +25,14 @@ import (
 // This should only be called once, and reused for all connections after (leave
 // connections open)
 
+type connection struct {
+	DB *sql.DB
+}
+
 type ModelType struct {
+	connection
 	Name string
 	F    []Field
-	DB   *sql.DB
 }
 
 type Model map[string]*ModelType
@@ -64,7 +68,7 @@ func (m Model) AddModel(name string) {
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	config := config.Load_config(f)
 	db := configConnect(config)
-	mt := ModelType{name, []Field{}, db}
+	mt := ModelType{connection{db}, name, []Field{}}
 	m[name] = &mt
 }
 
@@ -74,7 +78,7 @@ func NewModel(name string) Model {
 	f := strings.Join([]string{dir, "settings.json"}, "/")
 	config := config.Load_config(f)
 	db := configConnect(config)
-	mt := ModelType{name, []Field{}, db}
+	mt := ModelType{connection{db}, name, []Field{}}
 	m[name] = &mt
 	return m
 }
