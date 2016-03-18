@@ -22,17 +22,18 @@ go build
 At which point you'll have a folder named `projectname` with the following structure:
 
     projectname
-    --settings.json   
-    --manager.go      
-    --/app
-    ----urls.go
-    ----/views
-    ------views.go
-    ----/models
-    ------models.go
-    ----/temps
-    ------|home.html
+    ├─settings.json   
+    ├─manager.go      
+    ├─app
+    │  └─urls.go
+    │  └─views
+    │      └─views.go
+    │  └─models
+    │      └─models.go
+    │  └─temps
+    │      └─home.html
     
+
 #### Running a project
 From within the project type:
 ```
