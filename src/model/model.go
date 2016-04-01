@@ -12,7 +12,6 @@ import (
 )
 
 // TODO
-// 0. API should have commands that are independant of the database type
 // 1. create database from models
 //    a. Handle optional args (unique, etc...)
 //    b. constraints (using func or args in initializer funcs)
@@ -22,10 +21,6 @@ import (
 //    c. delete (needs to be sanitized)
 //    d. get (needs to be sanitized)
 //    e. filter should be able to be used with some of the above, e.g. delete
-
-// Takes a db type (eg. postgres) username and dbname (should take pswd too)
-// This should only be called once, and reused for all connections after (leave
-// connections open)
 
 type connection struct {
 	DB     *sql.DB
@@ -94,16 +89,6 @@ func NewModel(name string) Model {
 	return m
 }
 
-// These are all for postgres right now -- should use
-// DB type from
-
-// Should implement the following types with their spelling, as
-// they are specified by SQL (http://www.postgresql.org/docs/9.4/static/datatype.html):
-// bigint, bit, bit varying, boolean, char, character varying, character, varchar,
-// date, double precision, integer, interval, numeric, decimal, real, smallint, time
-// (with or without time zone), timestamp (with or without time zone), xml.
-
-// this should accept additional arguments (default, etc..)
 func (m *ModelType) IntegerField(args ...string) {
 	m.F = append(m.F, Field{args[0], "integer"})
 }
