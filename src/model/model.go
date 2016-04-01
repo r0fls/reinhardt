@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	"github.com/r0fls/reinhardt/src/config"
 	"log"
@@ -16,7 +17,7 @@ import (
 //    a. Handle optional args (unique, etc...)
 //    b. constraints (using func or args in initializer funcs)
 // 2. create functions that allow access from views
-//    a. insert (needs to be sanitized)
+//    a. insert (needs to be sanitized for postgres)
 //    b. update (needs to be sanitized)
 //    c. delete (needs to be sanitized)
 //    d. get (needs to be sanitized)
@@ -54,8 +55,16 @@ type Value struct {
 func Connect(dbtype string, username string, dbname string,
 	ip string, password string) *sql.DB {
 
-	s := fmt.Sprintf("%s://%s:%s@%s/%s",
-		dbtype, username, password, ip, dbname)
+	var s string
+	if dbtype == "mysql" {
+		s = fmt.Sprintf("%s:%s@tcp(%s)/%s",
+			username, password, ip, dbname)
+	} else if dbtype == "postgres" {
+		s = fmt.Sprintf("%s://%s:%s@%s/%s",
+			dbtype, username, password, ip, dbname)
+	} else {
+		fmt.Println("Database not supported")
+	}
 	db, err := sql.Open(dbtype, fmt.Sprintf(s))
 	check(err)
 	return db
@@ -195,17 +204,21 @@ func (m *ModelType) Insert(v []string) {
 	check(err)
 }
 
-func (m Model) Insert(model string, v []string) {
-	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES ('%s');",
+func (m Model) Insert(model string, v ...string) {
+	s := fmt.Sprintf("INSERT INTO %s(%s) VALUES (?%s);",
 		m[model].Name, strings.Join(m[model].Cols(), ", "),
-		strings.Join(v, "', '"))
+		strings.Repeat(", ?", len(m[model].Cols())-1))
 	fmt.Println(s)
-	_, err := m[model].DB.Query(s)
+	args := make([]interface{}, len(v))
+	for i, value := range v {
+		args[i] = value
+	}
+	_, err := m[model].DB.Query(s, args...)
 	check(err)
 }
 
 func get(db *sql.DB, column string, table string, filter string) *sql.Rows {
-	s := fmt.Sprintf("SELECT %s FROM %s WHERE %s=?", column, table, column)
+	s := fmt.Sprintf("SELECT * FROM %s WHERE %s=?", column, table, column)
 	rows, err := db.Query(s, filter)
 	check(err)
 	return rows
