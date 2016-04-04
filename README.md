@@ -14,6 +14,8 @@ go install
 
 ### Overview
 
+These steps assume you have your shell's `GOPATH` properly configured, and your `bin` directory properly exported to your `PATH`. See [here](https://golang.org/doc/code.html#GOPATH) if that's not the case.
+
 #### Installation
 ```bash
 go install github.com/r0fls/reinhardt
