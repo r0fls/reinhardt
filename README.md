@@ -2,22 +2,28 @@
 
 This is a golang MVC modeled loosely off of Django. Still in pre-alpha.
 
-### Getting Started
+### Quick setup
+
+```bash
+go install github.com/r0fls/reinhardt
+reinhardt new <projectname>
+cd <projectname>
+go install
+<projectname> runserver
+```
+
+### Overview
 
 #### Installation
 ```bash
-go get github.com/r0fls/reinhardt
-cd $GOPATH/src/github.com/r0fls/reinhardt
-go build
+go install github.com/r0fls/reinhardt
 ```
 
 #### Starting a new project
 
 ```bash
-./reinhardt new <projectname>
+reinhardt new <projectname>
 cd <projectname>
-go build
-./<projectname> runserver
 ```
 At which point you'll have a folder named `projectname` with the following structure:
 
@@ -34,9 +40,12 @@ At which point you'll have a folder named `projectname` with the following struc
     │      └─home.html
     
 
-#### Running a project
+#### Compiling a project
 From within the project type:
+```bash
+go install
 ```
-go build
-./projectname runserver
+#### Running a project
+```bash
+<projectname> runserver
 ```
