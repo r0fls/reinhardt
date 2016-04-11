@@ -2,6 +2,8 @@
 
 This is a golang MVC modeled loosely off of Django.
 
+These steps assume you have your shell's `GOPATH` properly configured, and your `bin` directory properly exported to your `PATH`. See [here](https://golang.org/doc/code.html#GOPATH) if that's not the case.
+
 ### Quick setup
 
 ```bash
@@ -13,8 +15,6 @@ go install
 ```
 
 ### Overview
-
-These steps assume you have your shell's `GOPATH` properly configured, and your `bin` directory properly exported to your `PATH`. See [here](https://golang.org/doc/code.html#GOPATH) if that's not the case.
 
 #### Installation
 ```bash
@@ -51,3 +51,7 @@ go install
 ```bash
 <projectname> runserver
 ```
+
+#### TODO:
+ - Complete models
+ - URL parameters
