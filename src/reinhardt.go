@@ -44,8 +44,8 @@ func new_project(name string) {
 	dir, _ := os.Getwd()
 	gopath := os.Getenv("GOPATH")
 	local := strings.Replace(dir, gopath, "", 1)
-	local = strings.Replace(local, "src/", "", 1)
-	if string([]rune(local)[0]) == "/" {
+	local, err = filepath.Rel("/src", local)
+	if string([]rune(local)[0]) == "/" || string([]rune(local)[0]) == "\\" {
 		local = local[1:]
 	}
 	local = filepath.Join(local, name)
