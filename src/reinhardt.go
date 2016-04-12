@@ -39,7 +39,6 @@ func new_project(name string) {
 	err = ioutil.WriteFile(filepath.Join(name, "app", "temps", "home.html"), text, 0644)
 	check(err)
 
-	//s := []string{name, "settings.json"}
 	text, err = ioutil.ReadFile("src/app_files/settings.json")
 	check(err)
 	dir, _ := os.Getwd()
@@ -54,7 +53,6 @@ func new_project(name string) {
 	check(err)
 
 	c := config.Load_config(filepath.Join(name, "settings.json"))
-	//s = []string{name, "manager.go"}
 	text, err = ioutil.ReadFile("src/app_files/manager.go")
 	check(err)
 	tmpl, _ := template.New("manager").Parse(string(text))
@@ -63,7 +61,6 @@ func new_project(name string) {
 	err = tmpl.Execute(f, c)
 	check(err)
 
-	//s = []string{name, "app", "urls.go"}
 	text, err = ioutil.ReadFile("src/app_files/urls.go")
 	check(err)
 	tmpl, _ = template.New("urls").Parse(string(text))
