@@ -17,15 +17,13 @@ func check(e error) {
 }
 
 func new_project(name string) {
-	m := []string{name, "app", "models"}
-	os.MkdirAll(strings.Join(m, "/"), 0700)
+	os.MkdirAll(filepath.Join(name, "app", "models"), 0700)
 	text, err := ioutil.ReadFile("src/app_files/models.go")
 	check(err)
 	err = ioutil.WriteFile(filepath.Join(name, "app", "models", "models.go"), text, 0644)
 	check(err)
 
-	v := []string{name, "app", "views"}
-	os.Mkdir(strings.Join(v, "/"), 0700)
+	os.Mkdir(filepath.Join(name, "app", "views"), 0700)
 
 	text, err = ioutil.ReadFile("src/app_files/views.go")
 	check(err)
@@ -39,13 +37,12 @@ func new_project(name string) {
 	err = ioutil.WriteFile(filepath.Join(name, "app", "temps", "home.html"), text, 0644)
 	check(err)
 
-	//s := []string{name, "settings.json"}
 	text, err = ioutil.ReadFile("src/app_files/settings.json")
 	check(err)
 	dir, _ := os.Getwd()
 	gopath := os.Getenv("GOPATH")
-	local := strings.Replace(dir, gopath, "", 1)
-	local = strings.Replace(local, "src/", "", 1)
+	local, _ := filepath.Rel(gopath, dir)
+	local, _ = filepath.Rel("src", local)
 	if string([]rune(local)[0]) == "/" {
 		local = local[1:]
 	}
@@ -54,7 +51,6 @@ func new_project(name string) {
 	check(err)
 
 	c := config.Load_config(filepath.Join(name, "settings.json"))
-	//s = []string{name, "manager.go"}
 	text, err = ioutil.ReadFile("src/app_files/manager.go")
 	check(err)
 	tmpl, _ := template.New("manager").Parse(string(text))
@@ -63,7 +59,6 @@ func new_project(name string) {
 	err = tmpl.Execute(f, c)
 	check(err)
 
-	//s = []string{name, "app", "urls.go"}
 	text, err = ioutil.ReadFile("src/app_files/urls.go")
 	check(err)
 	tmpl, _ = template.New("urls").Parse(string(text))
