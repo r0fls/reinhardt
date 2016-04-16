@@ -18,32 +18,32 @@ func check(e error) {
 
 func new_project(name string) {
 	os.MkdirAll(filepath.Join(name, "app", "models"), 0700)
-	text, err := ioutil.ReadFile("src/app_files/models.go")
+	text, err := ioutil.ReadFile(filepath.Join("src", "app_files", "models.go"))
 	check(err)
 	err = ioutil.WriteFile(filepath.Join(name, "app", "models", "models.go"), text, 0644)
 	check(err)
 
 	os.Mkdir(filepath.Join(name, "app", "views"), 0700)
 
-	text, err = ioutil.ReadFile("src/app_files/views.go")
+	text, err = ioutil.ReadFile(filepath.Join("src", "app_files", "views.go"))
 	check(err)
 	err = ioutil.WriteFile(filepath.Join(name, "app", "views", "views.go"), text, 0644)
 	check(err)
 
 	os.Mkdir(filepath.Join(name, "app", "temps"), 0700)
 
-	text, err = ioutil.ReadFile("src/app_files/home.html")
+	text, err = ioutil.ReadFile(filepath.Join("src", "app_files", "home.html"))
 	check(err)
 	err = ioutil.WriteFile(filepath.Join(name, "app", "temps", "home.html"), text, 0644)
 	check(err)
 
-	text, err = ioutil.ReadFile("src/app_files/settings.json")
+	text, err = ioutil.ReadFile(filepath.Join("src", "app_files", "settings.json"))
 	check(err)
 	dir, _ := os.Getwd()
 	gopath := os.Getenv("GOPATH")
 	local, _ := filepath.Rel(gopath, dir)
 	local, _ = filepath.Rel("src", local)
-	if string([]rune(local)[0]) == "/" {
+	if string([]rune(local)[0]) == "/" || string([]rune(local)[0]) == "\\" {
 		local = local[1:]
 	}
 	local = filepath.Join(local, name)
@@ -51,7 +51,7 @@ func new_project(name string) {
 	check(err)
 
 	c := config.Load_config(filepath.Join(name, "settings.json"))
-	text, err = ioutil.ReadFile("src/app_files/manager.go")
+	text, err = ioutil.ReadFile(filepath.Join("src", "app_files", "manager.go"))
 	check(err)
 	tmpl, _ := template.New("manager").Parse(string(text))
 	f, err := os.Create(filepath.Join(name, "manager.go"))
@@ -59,7 +59,7 @@ func new_project(name string) {
 	err = tmpl.Execute(f, c)
 	check(err)
 
-	text, err = ioutil.ReadFile("src/app_files/urls.go")
+	text, err = ioutil.ReadFile(filepath.Join("src", "app_files", "urls.go"))
 	check(err)
 	tmpl, _ = template.New("urls").Parse(string(text))
 	f, err = os.Create(filepath.Join(name, "app", "urls.go"))
