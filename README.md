@@ -7,6 +7,7 @@ These steps assume you have your shell's `GOPATH` properly configured, and your 
 ### Quick setup
 
 ```bash
+go get github.com/r0fls/reinhardt
 go install github.com/r0fls/reinhardt
 reinhardt new <projectname>
 cd <projectname>
@@ -18,6 +19,7 @@ go install
 
 #### Installation
 ```bash
+go get github.com/r0fls/reinhardt
 go install github.com/r0fls/reinhardt
 ```
 
