@@ -39,6 +39,7 @@ func run_server(location string) {
 		http.Handle(static, http.StripPrefix(static, fs))
 	}
 	ap := []string{config.Address, config.Port}
+	fmt.Printf("Serving on %s:%s\n", config.Address, config.Port)
 	log.Fatal(http.ListenAndServe(strings.Join(ap, ":"), nil))
 }
 
